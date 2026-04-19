@@ -9,7 +9,7 @@
         <p id="output"></p>
         <script>
             async function callAPI(){
-                const res = await fetch("http://localhost:3000");
+                const res = await fetch("http://52.66.206.113:3000");
                 const data = await res.text();
                 document.getElementsById("output").innerText = data;
             }
