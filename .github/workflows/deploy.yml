@@ -19,7 +19,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd backend || exit
+            cd ~/simple-devops-app/backend || exit
 
             git pull
 
@@ -50,4 +50,4 @@ jobs:
 
       - name: Deploy frontend to S3
         run: |
-          aws s3 sync frontend/ s3://my-simple-devops-app-frontend-prasanna-2026 --delete
+          aws s3 sync frontend/ s3://my-simple-devops-app-frontend --delete
