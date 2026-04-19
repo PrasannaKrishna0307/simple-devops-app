@@ -1,0 +1,46 @@
+name : Deploy Backend
+
+on:
+    push:
+        branches: [ "main" ]
+
+jobs:
+    deploy-backend:
+        runs-on: ubuntu-latest
+        if: contains(github.event.head_commit.message,'backend') || contains(join(github.event.commits.*.modified,','),'backend')
+
+        steps:
+        - uses: actions/checkout@v3
+
+        - name: Deploy via SSH
+          uses: appleboy/ssh-action@v0.1.6
+          with:
+            host: ${{ secrets.EC2_HOST }}
+            username: ubuntu
+            key: ${{ secrets.EC2_KEY }}
+            script: |
+                cd simple-devops-app/simple-devops-app/backend
+                git pull
+                sudo docker build -t backend-app .
+                sudo docker stop $(docker ps -q) || true
+                sudo docker rm $(sudo docker ps -aq) || true
+                sudo docker run -d -p 3000:3000 backend-app
+
+    deploy-frontend:
+        runs-on: ubuntu-latest
+        if: contains(join(github.event.commits.*.modified,','),'frontend')
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v2
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+                aws-region: ap-south-1
+
+            - name: Deploy frontend to S3
+              run: |
+                aws s3 sync frontend/ s3://simple-devops-app-frontend-prasanna-2026 --delete
