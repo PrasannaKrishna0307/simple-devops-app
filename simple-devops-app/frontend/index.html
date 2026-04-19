@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple App</title>
+    </head>
+    <body>
+        <h1>Frontend</h1>
+        <button onclick="callAPI()">Call Backend</button>
+        <p id="output"></p>
+        <script>
+            async function callAPI(){
+                const res = await fetch("http://localhost:3000");
+                const data = await res.text();
+                document.getElementsById("output").innerText = data;
+            }
+        </script>
+    </body>
+</html>
